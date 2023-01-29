@@ -1,0 +1,64 @@
+//SPDX-License-Identifier: MIT
+
+pragma solidity >=0.6.6 <0.9.0;
+
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
+contract PriceConsumerV3 {
+    AggregatorV3Interface internal priceFeed;
+
+    constructor() {
+        priceFeed = AggregatorV3Interface(
+            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
+        );
+    }
+
+    /**
+     * Returns the latest price.
+     */
+    function getLatestPrice() public view returns (int) {
+        // prettier-ignore
+        (
+            /* uint80 roundID */,
+            int price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) = priceFeed.latestRoundData();
+        return price;
+    }
+}
+
+contract FundMe {
+
+    mapping(address => uint256) public addressToAmountFunded;
+
+     
+     function fund() public payable {
+          addressToAmountFunded[msg.sender] += msg.value;
+     }
+
+     function getVersion() public view returns (uint256){
+     AggregatorV3Interface priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+     return priceFeed.version();
+    }
+
+    function getLatestPrice() public view returns(uint256){
+    AggregatorV3Interface priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+    
+         (/* uint80 roundID */,
+            int price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/) 
+         =priceFeed.latestRoundData();
+          return uint256(price*1000000000);
+    }
+
+    function getConvetsionRate(uint256 ethAmount) public view returns(uint256){
+      uint256 ethPrice = getLatestPrice();
+      uint256 ethAmountInUsd = ( ethPrice* ethAmount) / 1000000000000000000 ;
+      return ethAmountInUsd;
+    }
+    
+}
