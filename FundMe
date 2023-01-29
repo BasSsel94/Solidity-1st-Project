@@ -35,7 +35,9 @@ contract FundMe {
 
      
      function fund() public payable {
-          addressToAmountFunded[msg.sender] += msg.value;
+         uint256 minimumUSD = 50 * 10 ** 18;
+         require (getConvetsionRate(msg.value) >= minimumUSD, "MAISAN is MY Love and she is the cutest");
+         addressToAmountFunded[msg.sender] += msg.value;
      }
 
      function getVersion() public view returns (uint256){
@@ -60,5 +62,5 @@ contract FundMe {
       uint256 ethAmountInUsd = ( ethPrice* ethAmount) / 1000000000000000000 ;
       return ethAmountInUsd;
     }
-    
+
 }
